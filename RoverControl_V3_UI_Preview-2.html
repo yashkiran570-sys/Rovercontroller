@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/><meta content="#101318" name="theme-color"/><title>Rover Control</title>
+<style>
+:root{color-scheme:dark;--bg:#0d1015;--panel:#151a22;--panel2:#1b222c;--line:#2a3441;--text:#eef3f8;--muted:#91a0b2;--accent:#62e6ce;--accent2:#8bb8ff;--danger:#ff647c;--warn:#ffc86b;--radius:18px}*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 450px at 50% -160px,#20323b 0%,var(--bg) 70%);color:var(--text);font:15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}button,input,select{font:inherit}button{color:inherit;cursor:pointer;touch-action:manipulation}.app{max-width:1050px;margin:auto;padding:16px 14px 30px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.brand{display:flex;align-items:center;gap:11px}.logo{width:43px;height:43px;border-radius:14px;background:linear-gradient(145deg,#263d45,#19242d);border:1px solid #3c5d63;display:grid;place-items:center;color:var(--accent)}.logo svg{width:25px}.brand h1{font-size:18px;margin:0;letter-spacing:.2px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.status{display:flex;align-items:center;gap:7px;background:#151b22;border:1px solid var(--line);padding:9px 11px;border-radius:99px;font-size:12px;color:var(--muted);white-space:nowrap}.dot{width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 12px #ffc86b55}.dot.on{background:var(--accent);box-shadow:0 0 12px #62e6ce66}.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,.75fr);gap:14px}.panel{background:linear-gradient(145deg,#171d26,#131820);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:0 12px 30px #0002}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.panel h2{font-size:14px;margin:0;font-weight:700;letter-spacing:.2px}.eyebrow{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}.chip{border:1px solid var(--line);background:#11161d;color:var(--muted);border-radius:99px;padding:6px 9px;font-size:11px}.telemetry{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}.metric{background:#11161d;border:1px solid #252e39;border-radius:13px;padding:11px 10px;min-width:0}.metric .label{color:var(--muted);font-size:11px;display:flex;align-items:center;gap:5px}.metric strong{display:block;font-size:19px;margin-top:5px;font-variant-numeric:tabular-nums}.metric small{font-size:10px;color:var(--muted);font-weight:500}.controlModes{display:flex;gap:6px;flex-wrap:wrap}.mode{border:1px solid var(--line);background:#11161d;color:var(--muted);padding:8px 11px;border-radius:10px;font-size:12px}.mode.active{border-color:#4caaa0;background:#19302f;color:var(--accent)}.driveArea{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.stickWrap{background:#11161d;border:1px solid #252e39;border-radius:16px;padding:12px;min-width:0}.stickTitle{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:9px}.stickTitle span:last-child{color:var(--muted);font-size:10px}.stick{width:min(100%,210px);aspect-ratio:1;border-radius:50%;margin:0 auto;position:relative;touch-action:none;user-select:none;background:radial-gradient(circle at 50% 50%,#222d38 0 31%,#19212b 32% 57%,#11161d 58%);border:1px solid #344150;box-shadow:inset 0 0 0 8px #ffffff03,inset 0 0 25px #0008}.stick:before,.stick:after{content:"";position:absolute;background:#ffffff0a}.stick:before{height:1px;left:13%;right:13%;top:50%}.stick:after{width:1px;top:13%;bottom:13%;left:50%}.knob{position:absolute;width:35%;height:35%;left:32.5%;top:32.5%;border-radius:50%;background:linear-gradient(145deg,#d9fff7,#61d9c7 65%,#309d91);box-shadow:0 5px 18px #0009,inset 0 1px 2px #fff;z-index:2;border:1px solid #b5fff1}.stickHint{text-align:center;font-size:10px;color:var(--muted);margin-top:8px}.directionPad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,48px);gap:7px;max-width:250px;margin:0 auto}.ctl{border:1px solid #34404d;background:linear-gradient(145deg,#242d38,#1a212a);border-radius:13px;display:grid;place-items:center;box-shadow:0 3px 0 #0a0d11;color:#dce7ef;transition:transform .08s,border-color .08s,background .08s}.ctl svg{width:20px;height:20px;stroke:currentColor}.ctl:active,.ctl.pressed{transform:translateY(2px);box-shadow:none;border-color:var(--accent);background:#1d3535;color:var(--accent)}.ctl.stop{background:#351e28;border-color:#63303e;color:#ff8b9d}.ctl.empty{visibility:hidden}.secondaryControls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.smallBtn{border:1px solid var(--line);background:#171e27;border-radius:10px;padding:9px 12px;font-size:12px;color:#d9e3ec}.smallBtn.active{border-color:#4caaa0;color:var(--accent)}.smallBtn.danger{background:#381d27;border-color:#6e3040;color:#ff9eac}.rightCol{display:grid;gap:14px;align-content:start}.setting{display:grid;gap:8px;margin:14px 0}.setting label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:#dce5ee}.setting output{color:var(--accent);font-variant-numeric:tabular-nums}.setting input[type=range]{width:100%;accent-color:var(--accent)}.select{width:100%;padding:10px;border-radius:10px;background:#10151c;border:1px solid var(--line);color:var(--text)}.toggleRow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #252e39}.toggleRow:last-child{border-bottom:0}.toggleRow strong{display:block;font-size:12px}.toggleRow small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.switch{position:relative;width:42px;height:24px;flex:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;border-radius:99px;background:#303a46;transition:.15s}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;border-radius:50%;background:#dce5ee;transition:.15s}.switch input:checked+.slider{background:#247d73}.switch input:checked+.slider:before{transform:translateX(18px);background:#e4fff8}.servoRow{display:flex;align-items:center;gap:9px}.servoRow input{flex:1;min-width:0;accent-color:var(--accent)}.servoValue{width:38px;text-align:right;color:var(--accent);font-size:12px}.notice{font-size:11px;color:var(--muted);line-height:1.5;margin-top:10px}.foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#69788a;font-size:10px;margin-top:14px;padding:0 4px}.connectionLine{font-size:11px;color:var(--muted);margin-top:10px}.connectionLine b{color:var(--accent);font-weight:600}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#202a35;border:1px solid #3b4c5b;padding:10px 15px;border-radius:12px;font-size:12px;transition:.2s;z-index:5}.toast.show{opacity:1;transform:translate(-50%,0)}.hidden{display:none!important}.modeGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.modeGrid .smallBtn{width:100%;min-height:39px}.alertStatus{font-size:11px;color:var(--muted);margin-top:8px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.rightCol{grid-template-columns:1fr 1fr}.rightCol .panel:first-child{grid-column:1/-1}.app{padding:12px 10px 24px}.panel{padding:13px}.telemetry{grid-template-columns:repeat(2,1fr)}.metric strong{font-size:18px}.driveArea{gap:8px}.stickWrap{padding:9px}.stick{width:min(100%,170px)}.directionPad{grid-template-rows:repeat(3,42px);gap:5px}.top{align-items:flex-start}.brand h1{font-size:16px}}
+@media(max-width:420px){.rightCol{grid-template-columns:1fr}.rightCol .panel:first-child{grid-column:auto}.driveArea{grid-template-columns:1fr 1fr}.stickTitle{font-size:11px}.status{padding:8px;font-size:10px}.logo{width:38px;height:38px}.panelHead{align-items:flex-start}}
+
+/* Compact, app-like shell: only the active screen scrolls. */
+html, body { width:100%; height:100%; height:100dvh; min-height:0; overflow:hidden; overscroll-behavior:none; }
+body { position:relative; }
+.app { height:100dvh; min-height:0; max-height:100dvh; overflow:hidden; display:flex; flex-direction:column; gap:0; padding:9px 12px 8px; }
+.top { flex:0 0 auto; gap:10px; margin-bottom:9px; }
+.menuBtn { flex:none; width:39px; height:39px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; background:#151d25; border:1px solid var(--line); border-radius:12px; }
+.menuBtn span { width:17px; height:2px; border-radius:2px; background:var(--text); transition:transform .18s, opacity .18s; }
+.menuBtn:active { border-color:var(--accent); }
+.brand { min-width:0; flex:1; }
+.telemetry { flex:0 0 auto; margin-bottom:9px; gap:7px; }
+.metric { padding:8px 9px; }
+.metric strong { font-size:18px; }
+.screens { flex:1 1 auto; min-height:0; position:relative; overflow:hidden; }
+.screen { display:none; height:100%; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:1px 1px 12px; scrollbar-width:thin; scrollbar-color:#354351 transparent; }
+.screen.active { display:block; }
+.screen > .panel { margin-bottom:12px; }
+#screen-drive.active { display:flex; flex-direction:column; }
+#screen-drive > .panel { flex:1 0 auto; min-height:100%; margin:0; display:flex; flex-direction:column; }
+#screen-drive .panelHead:first-child { flex:0 0 auto; }
+#screen-drive .controlModes { flex:0 0 auto; }
+.controllerStage { display:flex; flex:1 1 auto; min-height:0; flex-direction:column; gap:9px; margin-top:10px; }
+.driveArea { flex:1 1 auto; min-height:0; align-items:center; margin-top:0; }
+.stickWrap { display:flex; flex-direction:column; justify-content:center; min-width:0; }
+.stick { width:min(100%, 210px); max-width:min(210px, 25vh); }
+.directionHeading { margin:0!important; }
+.directionPad { width:min(100%, 310px); max-width:310px; grid-template-rows:repeat(3, minmax(42px, 1fr)); flex:1 1 auto; max-height:240px; }
+#screen-drive .secondaryControls { flex:0 0 auto; margin-top:10px; }
+#screen-drive .connectionLine { flex:0 0 auto; }
+body[data-control-type="joystick"] #screen-drive .directionHeading,
+body[data-control-type="joystick"] #screen-drive .directionPad { display:none!important; }
+body[data-control-type="buttons"] #screen-drive .driveArea { display:none!important; }
+body[data-layout="left"] #screen-drive #rightWrap { display:none!important; }
+body[data-control-type="buttons"] #screen-drive #centerBtn { display:none!important; }
+.settingHint { color:var(--muted); font-size:11px; line-height:1.45; margin:0; }
+.controlTypeSetting { padding:12px; border:1px solid #2d766e; background:linear-gradient(145deg,#162a2c,#141b23); border-radius:13px; }
+.controlTypeSetting label { color:var(--accent); }
+.drawerScrim { position:fixed; inset:0; z-index:19; background:rgba(2,6,10,.68); opacity:0; pointer-events:none; transition:opacity .22s ease; }
+.drawer { position:fixed; z-index:20; inset:0 auto 0 0; width:min(84vw,330px); height:100dvh; display:flex; flex-direction:column; background:linear-gradient(160deg,#19222c,#10151c 72%); border-right:1px solid #32404c; box-shadow:20px 0 50px #0007; transform:translateX(-105%); transition:transform .24s cubic-bezier(.2,.8,.2,1); padding:18px 13px 14px; }
+body.menu-open .drawer { transform:translateX(0); }
+body.menu-open .drawerScrim { opacity:1; pointer-events:auto; }
+.drawerHead { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:5px 3px 20px; border-bottom:1px solid var(--line); }
+.drawerBrand { display:flex; align-items:center; gap:10px; min-width:0; }
+.drawerLogo { width:42px; height:42px; display:grid; place-items:center; border-radius:13px; border:1px solid #3c696c; background:linear-gradient(145deg,#244345,#18262d); color:var(--accent); font-weight:900; letter-spacing:-1px; }
+.drawerBrand strong { display:block; font-size:12px; letter-spacing:.5px; }
+.drawerBrand small { display:block; font-size:10px; color:var(--muted); margin-top:3px; }
+.drawerClose { width:34px; height:34px; border:1px solid var(--line); border-radius:10px; background:#111820; font-size:25px; line-height:1; color:#afbdc9; }
+.drawerSectionLabel { color:#6f8292; font-size:10px; letter-spacing:1.7px; margin:22px 10px 9px; }
+.drawerNav { display:grid; gap:7px; }
+.navItem { width:100%; display:grid; grid-template-columns:34px 1fr 12px; align-items:center; gap:10px; text-align:left; border:1px solid transparent; border-radius:13px; padding:12px 10px; background:transparent; color:var(--text); }
+.navItem.active { border-color:#335956; background:linear-gradient(100deg,#1d3537,#19232b); }
+.navGlyph { width:32px; height:32px; display:grid; place-items:center; border:1px solid #34404b; border-radius:10px; background:#11171e; color:#b4c5d1; font-size:17px; }
+.navItem.active .navGlyph { border-color:#3e827b; color:var(--accent); }
+.navItem strong { display:block; font-size:12px; font-weight:700; }
+.navItem small { display:block; color:var(--muted); font-size:10px; margin-top:3px; }
+.navArrow { color:#6f8191; font-size:22px; }
+.drawerFoot { margin-top:auto; display:flex; align-items:center; gap:9px; padding:13px 10px; border:1px solid #283541; border-radius:12px; background:#11171e; }
+.drawerFootDot { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 10px #62e6ce70; flex:none; }
+.drawerFoot strong { display:block; font-size:10px; letter-spacing:.7px; }
+.drawerFoot small { display:block; font-size:10px; color:var(--muted); margin-top:3px; }
+.toast { z-index:30; bottom:18px; }
+@media(max-width:760px) {
+  .app { padding:8px 9px 7px; }
+  .top { align-items:center; }
+  .menuBtn { width:37px; height:37px; }
+  .telemetry { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .metric { padding:7px 9px; }
+  .metric strong { font-size:17px; margin-top:3px; }
+  .metric .label { font-size:10px; }
+  #screen-drive > .panel { padding:12px; }
+  .driveArea { gap:8px; }
+  .stickWrap { padding:8px; }
+  .stick { max-width:min(170px, 23vh); }
+  .directionPad { grid-template-rows:repeat(3, minmax(40px, 1fr)); max-height:220px; gap:6px; }
+  .screen { padding-bottom:16px; }
+}
+@media(max-width:390px) {
+  .brand h1 { font-size:14px; }
+  .brand p { font-size:10px; }
+  .status { padding:7px 8px; gap:5px; }
+  .status #statusText { max-width:54px; overflow:hidden; text-overflow:ellipsis; }
+  .driveArea { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .stickTitle { font-size:10px; gap:3px; }
+  .stickTitle span:last-child { font-size:9px; }
+  #screen-drive .panelHead h2 { font-size:13px; }
+}
+@media(max-height:650px) {
+  .app { padding-top:6px; }
+  .top { margin-bottom:6px; }
+  .telemetry { margin-bottom:6px; }
+  .metric { padding:5px 8px; }
+  .metric strong { font-size:16px; }
+  .controllerStage { margin-top:7px; gap:6px; }
+  .stick { max-width:min(175px, 22vh); }
+  #screen-drive .secondaryControls { margin-top:6px; }
+}
+
+/* V3.1 landscape fixes: compact telemetry, reclaim controller height, reliable drawer */
+@media (orientation:landscape) and (max-height:700px) {
+  html, body { height:100%; min-height:100%; overflow:hidden; }
+  body { min-height:0; }
+  .app { height:100vh; height:100dvh; max-width:none; padding:5px 9px; display:flex; flex-direction:column; overflow:hidden; }
+  .top { flex:0 0 38px; min-height:38px; margin:0 0 5px; gap:8px; }
+  .menuBtn { width:34px; height:34px; border-radius:10px; }
+  .logo { width:32px; height:32px; border-radius:10px; }
+  .logo svg { width:20px; }
+  .brand { gap:7px; }
+  .brand h1 { font-size:13px; }
+  .brand p { font-size:9px; margin-top:0; }
+  .status { padding:5px 8px; font-size:10px; }
+  .telemetry { flex:0 0 37px; grid-template-columns:repeat(4,minmax(0,1fr)); gap:5px; margin:0 0 5px; }
+  .metric { padding:3px 7px; border-radius:9px; display:flex; align-items:center; justify-content:space-between; gap:5px; }
+  .metric .label { font-size:8px; white-space:nowrap; }
+  .metric strong { font-size:12px; margin:0; white-space:nowrap; }
+  .metric small { font-size:8px; }
+  .screens { flex:1 1 0; min-height:0; }
+  .screen { padding:0 1px 2px; }
+  #screen-drive > .panel { min-height:0; flex:1 1 0; padding:7px 10px; }
+  #screen-drive .panelHead { margin-bottom:5px; }
+  #screen-drive .eyebrow { font-size:8px; }
+  #screen-drive .panelHead h2 { font-size:12px; }
+  .chip { padding:3px 7px; font-size:9px; }
+  .controlModes { gap:4px; }
+  .mode { padding:4px 8px; font-size:9px; border-radius:8px; }
+  .controllerStage { flex:1 1 0; min-height:0; margin-top:4px; gap:4px; }
+  #screen-drive .driveArea { flex:1 1 0; min-height:0; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .stickWrap { padding:4px 7px; border-radius:12px; }
+  .stickTitle { margin-bottom:3px; font-size:9px; }
+  .stickTitle span:last-child { font-size:8px; }
+  .stick { width:min(34vw,44vh,220px); max-width:min(34vw,44vh,220px); }
+  .stickHint { font-size:8px; margin-top:2px; }
+  #screen-drive .secondaryControls { flex:0 0 auto; margin-top:4px; gap:5px; }
+  .smallBtn { padding:5px 8px; font-size:9px; }
+  #screen-drive .connectionLine { flex:0 0 auto; margin-top:3px; font-size:9px; }
+  .directionHeading { margin:0!important; }
+  .directionPad { max-height:100%; grid-template-rows:repeat(3,minmax(28px,1fr)); gap:4px; }
+}
+@media (orientation:landscape) and (max-height:460px) {
+  .telemetry { flex-basis:31px; }
+  .top { flex-basis:33px; min-height:33px; }
+  .stick { width:min(31vw,39vh,185px); max-width:min(31vw,39vh,185px); }
+  #screen-drive .secondaryControls { display:none; }
+  #screen-drive .connectionLine { display:none; }
+}
+/* Fixed drawer fallback for Android WebView versions with inconsistent viewport handling */
+.drawer { position:fixed; top:0; bottom:0; left:0; height:100vh; height:100dvh; visibility:hidden; pointer-events:none; transform:translate3d(-105%,0,0); will-change:transform; }
+body.menu-open .drawer { visibility:visible; pointer-events:auto; transform:translate3d(0,0,0)!important; }
+.drawerScrim { position:fixed; inset:0; }
+body.menu-open .drawerScrim { z-index:19; }
+.drawer { z-index:20; }
+
+</style></head><body data-control-type="joystick" data-layout="custom"><main class="app"><header class="top"><button aria-controls="drawer" aria-expanded="false" aria-label="Open navigation menu" class="menuBtn" id="menuBtn" type="button"><span></span><span></span><span></span></button><div class="brand"><div class="logo"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24"><path d="M5 8h14l2 10H3L5 8Z"></path><path d="M8 8V5a4 4 0 0 1 8 0v3M7 13h2m6 0h2M8 18v2m8-2v2"></path><circle cx="12" cy="13" r="1.5"></circle></svg></div><div><h1>ROVER CONTROL</h1><p>Mobile robotics console <span style="color:#62e6ce">/ V3.0</span></p></div></div><div class="status"><span class="dot" id="statusDot"></span><span id="statusText">Connecting…</span></div></header><div class="telemetry"><div class="metric"><div class="label">◉ DISTANCE</div><strong id="distance">— <small>cm</small></strong></div><div class="metric"><div class="label">↗ SPEED LIMIT</div><strong id="speedMetric">70<small>%</small></strong></div><div class="metric"><div class="label">⌁ BATTERY</div><strong id="battery">— <small>V</small></strong></div><div class="metric"><div class="label">▣ LINK</div><strong id="rssi">— <small>dBm</small></strong></div></div><div class="screens" id="screens"><section aria-label="Drive console" class="screen active" id="screen-drive"><section class="panel"><div class="panelHead"><div><div class="eyebrow">Drive console</div><h2 style="margin-top:3px">Manual control</h2></div><span class="chip" id="modeChip">CUSTOM</span></div><div class="controlModes"><button class="mode active" data-mode="custom">Custom</button><button class="mode" data-mode="precision">Precision</button><button class="mode" data-mode="sport">Sport</button><button class="mode" data-mode="auto">Auto</button></div><div class="controllerStage"><div class="driveArea"><div class="stickWrap" id="leftWrap"><div class="stickTitle"><span>LEFT STICK</span><span id="leftReadout">0 / 0</span></div><div aria-label="Left joystick" class="stick" id="leftStick"><div class="knob"></div></div><div class="stickHint">Throttle / steering (configurable)</div></div><div class="stickWrap" id="rightWrap"><div class="stickTitle"><span>RIGHT STICK</span><span id="rightReadout">0 / 0</span></div><div aria-label="Right joystick" class="stick" id="rightStick"><div class="knob"></div></div><div class="stickHint">Independent drive control</div></div></div><div class="panelHead directionHeading" style="margin-top:15px"><h2>Directional buttons</h2><span class="eyebrow">Hold to move</span></div><div class="directionPad"><button class="ctl empty" tabindex="-1"></button><button aria-label="Forward" class="ctl" data-drive="forward" title="Forward"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"></path></svg></button><button class="ctl empty" tabindex="-1"></button><button aria-label="Left" class="ctl" data-drive="left" title="Left"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="M19 12H5m7-7-7 7 7 7"></path></svg></button><button aria-label="Emergency stop" class="ctl stop" id="stopBtn" title="Emergency stop"><svg fill="none" stroke-width="2.2" viewbox="0 0 24 24"><rect height="14" rx="3" width="14" x="5" y="5"></rect><path d="M9 9l6 6m0-6-6 6"></path></svg></button><button aria-label="Right" class="ctl" data-drive="right" title="Right"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"></path></svg></button><button class="ctl empty" tabindex="-1"></button><button aria-label="Reverse" class="ctl" data-drive="reverse" title="Reverse"><svg fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewbox="0 0 24 24"><path d="M12 5v14m7-7-7 7-7-7"></path></svg></button><button class="ctl empty" tabindex="-1"></button></div></div>
+
+
+<div class="secondaryControls"><button class="smallBtn" id="cruiseQuick">◷ Cruise off</button><button class="smallBtn" id="centerBtn">◎ Center sticks</button><button class="smallBtn danger" id="stopAll">■ STOP ALL</button></div><div class="connectionLine">Last command: <b id="lastReason">Ready</b></div></section></section><section aria-label="Automation" class="screen" id="screen-automation"><section class="panel"><div class="panelHead"><h2>Automation</h2><span class="chip">LIVE</span></div><div class="toggleRow"><div><strong>Obstacle avoidance</strong><small>Stop/turn when object is close</small></div><label class="switch"><input id="obstacleToggle" type="checkbox"/><span class="slider"></span></label></div><div class="setting"><label for="obstacleRange">Obstacle threshold <output id="obstacleRangeOut">25 cm</output></label><input id="obstacleRange" max="100" min="10" step="5" type="range" value="25"/></div><div class="toggleRow"><div><strong>Auto patrol</strong><small>Servo-assisted scan, then choose a clearer direction</small></div><label class="switch"><input id="patrolToggle" type="checkbox"/><span class="slider"></span></label></div><div class="toggleRow"><div><strong>Link failsafe · always on</strong><small>Motors stop if commands are lost</small></div><label class="switch"><input checked="" disabled="" id="failsafeToggle" type="checkbox"/><span class="slider"></span></label></div><p class="notice">Patrol uses the front ultrasonic sensor and servo scan to choose a clearer side. It is a basic reactive routine, not mapping or guaranteed collision avoidance. Supervise every run.</p></section></section><section aria-label="Controller settings" class="screen" id="screen-settings"><section class="panel"><div class="panelHead"><h2>Controller setup</h2><span class="eyebrow">CUSTOMIZE</span></div><div class="setting controlTypeSetting">
+<label for="controlType">Control interface</label>
+<select class="select" id="controlType">
+<option value="joystick">Joystick interface</option>
+<option value="buttons">Directional buttons</option>
+</select>
+<p class="settingHint">Only the selected interface appears on the Drive screen, just like a game controller layout.</p>
+</div><div class="setting"><label for="layout">Control layout</label><select class="select" id="layout"><option value="custom">Dual joysticks</option><option value="left">Single left joystick</option><option value="swap">Dual joysticks · swap roles</option></select></div><div class="setting"><label for="sensitivity">Sensitivity <output id="sensitivityOut">70%</output></label><input id="sensitivity" max="100" min="20" type="range" value="70"/></div><div class="setting"><label for="deadzone">Joystick dead zone <output id="deadzoneOut">12%</output></label><input id="deadzone" max="35" min="0" type="range" value="12"/></div><div class="setting"><label for="speedLimit">Maximum speed <output id="speedOut">70%</output></label><input id="speedLimit" max="100" min="20" type="range" value="70"/></div><div class="toggleRow"><div><strong>Cruise control</strong><small>Encoder-assisted speed hold when feedback is enabled</small></div><label class="switch"><input id="cruiseToggle" type="checkbox"/><span class="slider"></span></label></div><div class="setting"><label for="cruiseSpeed">Cruise level <output id="cruiseSpeedOut">40%</output></label><input id="cruiseSpeed" max="70" min="20" type="range" value="40"/></div>
+<div class="panelHead" style="margin-top:18px"><h2>Wheel feedback &amp; calibration</h2><span class="chip">OPTIONAL HARDWARE</span></div>
+<div class="toggleRow"><div><strong>Enable wheel encoders</strong><small>Turn on only after both encoder signals are wired and tested</small></div><label class="switch"><input id="encoderToggle" type="checkbox"/><span class="slider"></span></label></div>
+<div class="setting"><label for="ticksPerRev">Encoder pulses per wheel revolution <output id="ticksPerRevOut">20</output></label><input id="ticksPerRev" type="number" min="1" max="500" value="20" class="select"/></div>
+<div class="setting"><label for="wheelDiameter">Wheel diameter <output id="wheelDiameterOut">65 mm</output></label><input id="wheelDiameter" type="number" min="20" max="150" value="65" class="select"/></div>
+<div class="setting"><label for="maxWheelSpeed">Estimated max wheel speed <output id="maxWheelSpeedOut">450 mm/s</output></label><input id="maxWheelSpeed" type="number" min="50" max="2000" value="450" class="select"/></div>
+<button class="smallBtn" id="saveCalibration" type="button">SAVE CALIBRATION</button>
+<div class="setting"><label for="batteryLow">Low battery alert <output id="batteryLowOut">10.8 V</output></label><input id="batteryLow" type="range" min="9.6" max="11.7" step="0.1" value="10.8"/></div>
+<p class="notice">Encoder pins: GPIO34 / GPIO35; external 4.7kΩ pull-ups to 3.3V are required for open-collector outputs. OLED and MPU6050 I²C pins GPIO21 / GPIO22 are reserved for a later upgrade and are not used in this version.</p>
+</section></section><section aria-label="Lighting, alerts and servo" class="screen" id="screen-equipment"><section class="panel"><div class="panelHead"><h2>Lighting &amp; alerts</h2><span class="chip" id="alertsChip">ALL OFF</span></div>
+<div class="setting"><label for="ledMode">LED mode <output id="ledModeOut">OFF</output></label><select class="select" id="ledMode"><option value="off">Off</option><option value="on">Steady ON</option><option value="pulse">Breathing pulse</option><option value="rainbow">Rainbow cycle</option><option value="chase">Colour chase</option><option value="blink_slow">Slow blink</option><option value="blink_fast">Fast blink</option><option value="all_blink">Hazard flash</option><option value="obstacle">Obstacle warning</option></select></div>
+<div class="setting"><label for="buzzerMode">Buzzer mode <output id="buzzerModeOut">OFF</output></label><select class="select" id="buzzerMode"><option value="off">Off</option><option value="on">Continuous ON</option><option value="horn">Horn (hold button)</option><option value="beep">Single beep</option><option value="double">Double beep</option><option value="repeat">Repeating alert</option><option value="obstacle">Obstacle warning</option></select></div>
+<div class="secondaryControls" style="justify-content:flex-start"><button class="smallBtn" id="hornBtn">🔊 HORN · HOLD</button><button class="smallBtn" id="hazardBtn">⚠ HAZARD MODE</button><button class="smallBtn danger" id="alertsOffBtn">ALL OFF</button></div>
+
+<div class="setting"><label for="ledColor">LED colour <output id="ledColorOut">CYAN</output></label><select class="select" id="ledColor"><option value="cyan">Cyan</option><option value="blue">Blue</option><option value="green">Green</option><option value="purple">Purple</option><option value="amber">Amber</option><option value="white">White</option></select></div>
+<div class="setting"><label for="ledBrightness">LED brightness <output id="ledBrightnessOut">64 / 128</output></label><input id="ledBrightness" type="range" min="8" max="128" step="4" value="64"/></div>
+<p class="notice">WS2812B addressable strip · GPIO23 data through 74AHCT125 · dedicated regulated 5V rail. Keep brightness limited and share GND. Buzzer on GPIO19 through a transistor driver.</p><div class="alertStatus" id="alertStatus">Lights and buzzer are off.</div></section><section class="panel"><div class="panelHead"><h2>Servo / sensor head</h2><span class="chip" id="servoChip">90°</span></div><div class="servoRow"><span style="font-size:11px;color:var(--muted)">0°</span><input id="servoAngle" max="180" min="0" type="range" value="90"/><span style="font-size:11px;color:var(--muted)">180°</span><span class="servoValue" id="servoOut">90°</span></div><div class="secondaryControls" style="justify-content:flex-start"><button class="smallBtn" data-servo="45">◂ 45°</button><button class="smallBtn" data-servo="90">◎ 90°</button><button class="smallBtn" data-servo="135">45° ▸</button></div><p class="notice">Servo angle works only if the servo has suitable power and its signal is wired to the configured pin.</p></section></section>
+<section aria-label="Live telemetry" class="screen" id="screen-telemetry">
+  <section class="panel">
+    <div class="panelHead"><h2>Live telemetry</h2><span class="chip" id="telemetryHealth">WAITING</span></div>
+    <div class="telemetry" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+      <div class="metric"><div class="label">MEASURED SPEED</div><strong id="measuredSpeed">— <small>m/s</small></strong></div>
+      <div class="metric"><div class="label">TRIP DISTANCE</div><strong id="tripDistance">— <small>m</small></strong></div>
+      <div class="metric"><div class="label">BATTERY ESTIMATE</div><strong id="batteryPercent">— <small>%</small></strong></div>
+      <div class="metric"><div class="label">BATTERY STATE</div><strong id="batteryState">—</strong></div>
+    </div>
+    <div class="toggleRow"><div><strong>Left wheel speed</strong><small>Encoder-derived, if calibrated</small></div><b id="leftWheelSpeed">—</b></div>
+    <div class="toggleRow"><div><strong>Right wheel speed</strong><small>Encoder-derived, if calibrated</small></div><b id="rightWheelSpeed">—</b></div>
+    <div class="toggleRow"><div><strong>Encoder status</strong><small id="encoderDetail">Disabled until configured</small></div><b id="encoderState">OFF</b></div>
+    <div class="toggleRow"><div><strong>Ultrasonic sensor</strong><small>Forward range reading</small></div><b id="rangeState">—</b></div>
+    <div class="toggleRow"><div><strong>Wi-Fi signal</strong><small>Phone link RSSI</small></div><b id="linkState">—</b></div>
+    <div class="toggleRow"><div><strong>Controller uptime</strong><small>Since ESP32 restart</small></div><b id="uptime">—</b></div>
+    <div class="secondaryControls" style="justify-content:flex-start"><button class="smallBtn" id="resetTrip">RESET TRIP</button><button class="smallBtn" id="centerServo">CENTER SERVO</button></div>
+    <p class="notice">Battery percentage is an approximate 3S voltage estimate, not a fuel gauge. Encoder speed and distance remain unavailable until encoders are installed, enabled and calibrated.</p>
+  </section>
+  <section class="panel">
+    <div class="panelHead"><h2>Expansion readiness</h2><span class="chip">V3 HARDWARE</span></div>
+    <div class="toggleRow"><div><strong>WS2812B LED strip</strong><small>60 addressable LEDs · GPIO23</small></div><b id="ledState">READY</b></div>
+    <div class="toggleRow"><div><strong>Active buzzer</strong><small>Transistor-driven · GPIO19</small></div><b id="buzzerState">READY</b></div>
+    <div class="toggleRow"><div><strong>OLED display</strong><small>I²C GPIO21 / GPIO22 reserved</small></div><b>FUTURE</b></div>
+    <div class="toggleRow"><div><strong>MPU6050 motion sensor</strong><small>I²C GPIO21 / GPIO22 reserved</small></div><b>FUTURE</b></div>
+  </section>
+</section>
+</div></main>
+<div aria-hidden="true" class="drawerScrim" id="drawerScrim"></div>
+<aside aria-hidden="true" aria-label="App navigation" class="drawer" id="drawer">
+<div class="drawerHead">
+<div class="drawerBrand"><div class="drawerLogo">RC</div><div><strong>ROVER CONTROL</strong><small>Smart Rover · V3.0</small></div></div>
+<button aria-label="Close menu" class="drawerClose" id="closeMenu" type="button">×</button>
+</div>
+<div class="drawerSectionLabel">CONSOLE</div>
+<nav class="drawerNav">
+<button class="navItem active" data-screen="drive" type="button"><span class="navGlyph">⌁</span><span><strong>Drive console</strong><small>Joystick or buttons</small></span><span class="navArrow">›</span></button>
+<button class="navItem" data-screen="automation" type="button"><span class="navGlyph">◈</span><span><strong>Automation</strong><small>Obstacle stop and patrol</small></span><span class="navArrow">›</span></button>
+<button class="navItem" data-screen="telemetry" type="button"><span class="navGlyph">⌁</span><span><strong>Live telemetry</strong><small>Battery, speed and diagnostics</small></span><span class="navArrow">›</span></button>
+<button class="navItem" data-screen="settings" type="button"><span class="navGlyph">⚙</span><span><strong>Controller settings</strong><small>Interface, speed and feel</small></span><span class="navArrow">›</span></button>
+<button class="navItem" data-screen="equipment" type="button"><span class="navGlyph">✦</span><span><strong>Lights &amp; servo</strong><small>Alerts and sensor head</small></span><span class="navArrow">›</span></button>
+</nav>
+<div class="drawerFoot"><span class="drawerFootDot"></span><div><strong>LOCAL ESP32 LINK</strong><small>192.168.4.1 · Offline-ready UI</small></div></div>
+</aside>
+<div class="toast" id="toast"></div><script>
+const API_BASE='http://192.168.4.1'; const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];let online=false,mode='custom',activeDrive=null,stickValues={left:{x:0,y:0},right:{x:0,y:0}},lastSent=0,toastTimer;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),1900)}
+async function api(path,data){try{const r=await fetch(API_BASE+path,{mode:'cors',method:data?'POST':'GET',headers:data?{'Content-Type':'application/json'}:{},body:data?JSON.stringify(data):undefined,cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);return await r.json()}catch(e){setLink(false);return null}}
+function setLink(v){online=v;$('#statusDot').classList.toggle('on',v);$('#statusText').textContent=v?'Connected':'Offline';}
+function updateSettings(){const data={maxSpeed:+$('#speedLimit').value,sensitivity:+$('#sensitivity').value,deadZone:+$('#deadzone').value,obstacleLimit:+$('#obstacleRange').value,obstacleEnabled:$('#obstacleToggle').checked,patrolEnabled:$('#patrolToggle').checked,failsafeEnabled:true,cruiseEnabled:$('#cruiseToggle').checked,cruiseSpeed:+$('#cruiseSpeed').value,mode,layout:$('#layout').value,controlType:$('#controlType').value,encoderEnabled:$('#encoderToggle').checked,ticksPerRev:+$('#ticksPerRev').value,wheelDiameterMm:+$('#wheelDiameter').value,maxWheelSpeedMmS:+$('#maxWheelSpeed').value,batteryLowV:+$('#batteryLow').value,ledBrightness:+$('#ledBrightness').value,ledColor:$('#ledColor').value};$('#speedOut').textContent=data.maxSpeed+'%';$('#speedMetric').innerHTML=data.maxSpeed+'<small>%</small>';$('#sensitivityOut').textContent=data.sensitivity+'%';$('#deadzoneOut').textContent=data.deadZone+'%';$('#obstacleRangeOut').textContent=data.obstacleLimit+' cm';$('#cruiseSpeedOut').textContent=data.cruiseSpeed+'%';$('#ticksPerRevOut').textContent=data.ticksPerRev;$('#wheelDiameterOut').textContent=data.wheelDiameterMm+' mm';$('#maxWheelSpeedOut').textContent=data.maxWheelSpeedMmS+' mm/s';$('#batteryLowOut').textContent=data.batteryLowV.toFixed(1)+' V';$('#ledBrightnessOut').textContent=data.ledBrightness+' / 128';$('#ledColorOut').textContent=data.ledColor.toUpperCase();$('#cruiseQuick').textContent=data.cruiseEnabled?'◷ Cruise on':'◷ Cruise off';$('#cruiseQuick').classList.toggle('active',data.cruiseEnabled);api('/api/settings',data)}
+$$('input[type=range],input[type=number],#obstacleToggle,#patrolToggle,#failsafeToggle,#cruiseToggle,#encoderToggle,#layout,#ledColor').forEach(el=>el.addEventListener('change',updateSettings));
+function applyControlType(){const type=$('#controlType').value==='buttons'?'buttons':'joystick';document.body.dataset.controlType=type;document.body.dataset.layout=$('#layout').value;try{localStorage.setItem('rover-control-type',type)}catch(e){};}
+try{const savedType=localStorage.getItem('rover-control-type');if(savedType==='joystick'||savedType==='buttons')$('#controlType').value=savedType;}catch(e){}
+applyControlType();
+$('#controlType').addEventListener('change',()=>{stop();applyControlType();updateSettings();toast($('#controlType').value==='joystick'?'Joystick interface selected':'Directional buttons selected')});
+$('#layout').addEventListener('change',()=>{document.body.dataset.layout=$('#layout').value;updateSettings()});
+function setScreen(name){const id=['drive','automation','settings','equipment','telemetry'].includes(name)?name:'drive';$$('.screen').forEach(el=>el.classList.toggle('active',el.id==='screen-'+id));$$('.navItem').forEach(el=>el.classList.toggle('active',el.dataset.screen===id));document.body.classList.remove('menu-open');$('#drawer').setAttribute('aria-hidden','true');$('#drawerScrim').setAttribute('aria-hidden','true');$('#menuBtn').setAttribute('aria-expanded','false');if(id!=='drive')stop();}
+function openDrawer(){stop();document.body.classList.add('menu-open');$('#drawer').setAttribute('aria-hidden','false');$('#drawerScrim').setAttribute('aria-hidden','false');$('#menuBtn').setAttribute('aria-expanded','true')}
+function closeDrawer(){document.body.classList.remove('menu-open');$('#drawer').setAttribute('aria-hidden','true');$('#drawerScrim').setAttribute('aria-hidden','true');$('#menuBtn').setAttribute('aria-expanded','false')}
+$('#menuBtn').addEventListener('click',()=>{if(document.body.classList.contains('menu-open'))closeDrawer();else openDrawer();});$('#closeMenu').addEventListener('click',closeDrawer);$('#drawerScrim').addEventListener('click',closeDrawer);$$('.navItem').forEach(b=>b.addEventListener('click',()=>setScreen(b.dataset.screen)));document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDrawer()});
+$$('[data-mode]').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;$$('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));$('#modeChip').textContent=mode.toUpperCase();if(mode==='precision'){$('#speedLimit').value=35;$('#sensitivity').value=45}else if(mode==='sport'){$('#speedLimit').value=100;$('#sensitivity').value=90}else if(mode==='auto'){$('#patrolToggle').checked=true}else{$('#patrolToggle').checked=false}updateSettings();}));
+$('#cruiseQuick').addEventListener('click',()=>{$('#cruiseToggle').checked=!$('#cruiseToggle').checked;updateSettings()});
+$('#saveCalibration').addEventListener('click',()=>{updateSettings();toast('Calibration settings saved to rover')});
+$('#resetTrip').addEventListener('click',async()=>{const r=await api('/api/reset-trip',{});if(r&&r.ok)toast('Trip distance reset')});
+$('#centerServo').addEventListener('click',()=>{api('/api/servo',{angle:90});$('#servoAngle').value=90;$('#servoOut').textContent='90°';$('#servoChip').textContent='90°'});
+function mapStick(which,el){let knob=el.querySelector('.knob'),active=false;function move(e){const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,rad=r.width*.34;let dx=(e.clientX-cx)/rad,dy=(e.clientY-cy)/rad;const mag=Math.hypot(dx,dy);if(mag>1){dx/=mag;dy/=mag}stickValues[which]={x:Math.round(dx*100),y:Math.round(-dy*100)};knob.style.transform=`translate(${dx*rad}px,${dy*rad}px)`;$('#'+which+'Readout').textContent=stickValues[which].x+' / '+stickValues[which].y;sendDriveFromSticks()}function reset(){active=false;stickValues[which]={x:0,y:0};knob.style.transform='translate(0,0)';$('#'+which+'Readout').textContent='0 / 0';sendDriveFromSticks()}el.addEventListener('pointerdown',e=>{active=true;el.setPointerCapture(e.pointerId);move(e)});el.addEventListener('pointermove',e=>{if(active)move(e)});el.addEventListener('pointerup',reset);el.addEventListener('pointercancel',reset);el.addEventListener('lostpointercapture',()=>{if(active)reset()})}
+mapStick('left',$('#leftStick'));mapStick('right',$('#rightStick'));
+function sendDriveFromSticks(){if($('#controlType').value==='buttons')return;let a=stickValues.left,b=stickValues.right,layout=$('#layout').value;let throttle,turn;if(layout==='swap'){throttle=-b.y;turn=a.x}else if(layout==='left'){throttle=-a.y;turn=a.x}else if(mode==='custom'&&Math.abs(b.x)+Math.abs(b.y)>8){throttle=-b.y;turn=b.x}else{throttle=-a.y;turn=a.x}const dz=+$('#deadzone').value;if(Math.abs(throttle)<dz)throttle=0;if(Math.abs(turn)<dz)turn=0;throttle*=($('#sensitivity').value/100);turn*=($('#sensitivity').value/100);drive(Math.round(throttle),Math.round(turn))}
+
+function keepAliveDrive(){
+  if(activeDrive && $('#controlType').value==='buttons'){
+    const map={forward:[100,0],reverse:[-100,0],left:[0,-100],right:[0,100]};
+    const pair=map[activeDrive]; if(pair) drive(pair[0],pair[1]);
+  } else if($('#controlType').value==='joystick' && Math.abs(stickValues.left.x)+Math.abs(stickValues.left.y)+Math.abs(stickValues.right.x)+Math.abs(stickValues.right.y)>0) {
+    sendDriveFromSticks();
+  }
+}
+async function drive(throttle,turn){lastSent=Date.now();await api('/api/drive',{throttle,turn,speed:+$('#speedLimit').value,cruise:$('#cruiseToggle').checked,cruiseSpeed:+$('#cruiseSpeed').value});}
+function stop(){activeDrive=null;stickValues={left:{x:0,y:0},right:{x:0,y:0}};$$('.knob').forEach(k=>k.style.transform='translate(0,0)');$('#leftReadout').textContent='0 / 0';$('#rightReadout').textContent='0 / 0';$$('.ctl[data-drive]').forEach(b=>b.classList.remove('pressed'));api('/api/stop',{reason:'User stop'});$('#lastReason').textContent='Manual stop';}
+$('#stopBtn').addEventListener('click',stop);$('#stopAll').addEventListener('click',()=>{stop();$('#patrolToggle').checked=false;$('#cruiseToggle').checked=false;updateSettings();toast('Motors stopped')});$('#centerBtn').addEventListener('click',()=>{stop();toast('Sticks centered')});
+$$('[data-drive]').forEach(btn=>{const start=e=>{if($('#controlType').value!=='buttons')return;e.preventDefault();try{btn.setPointerCapture(e.pointerId)}catch(err){}activeDrive=btn.dataset.drive;btn.classList.add('pressed');const map={forward:[100,0],reverse:[-100,0],left:[0,-100],right:[0,100]};let [t,r]=map[activeDrive];drive(t,r)};const end=()=>{if(activeDrive===btn.dataset.drive){btn.classList.remove('pressed');activeDrive=null;api('/api/stop',{reason:'Button released'})}};btn.addEventListener('pointerdown',start);btn.addEventListener('pointerup',end);btn.addEventListener('pointercancel',end);btn.addEventListener('lostpointercapture',end)});
+$('#servoAngle').addEventListener('input',e=>{const n=+e.target.value;$('#servoOut').textContent=n+'°';$('#servoChip').textContent=n+'°'});$('#servoAngle').addEventListener('change',e=>api('/api/servo',{angle:+e.target.value}));$$('[data-servo]').forEach(b=>b.addEventListener('click',()=>{$('#servoAngle').value=b.dataset.servo;$('#servoOut').textContent=b.dataset.servo+'°';$('#servoChip').textContent=b.dataset.servo+'°';api('/api/servo',{angle:+b.dataset.servo})}));
+const modeNames={off:'OFF',on:'SOLID',solid:'SOLID',pulse:'PULSE',rainbow:'RAINBOW',chase:'CHASE',blink_slow:'SLOW BLINK',blink_fast:'FAST BLINK',all_blink:'HAZARD',obstacle:'OBSTACLE',horn:'HORN',beep:'BEEP',double:'DOUBLE BEEP',repeat:'REPEAT'};
+function sendAlertModes(){const led=$('#ledMode').value,buzz=$('#buzzerMode').value;$('#ledModeOut').textContent=modeNames[led]||led.toUpperCase();$('#buzzerModeOut').textContent=modeNames[buzz]||buzz.toUpperCase();$('#alertsChip').textContent=(led==='off'&&buzz==='off')?'ALL OFF':'ACTIVE';$('#alertStatus').textContent='LED: '+($('#ledModeOut').textContent)+' · Buzzer: '+($('#buzzerModeOut').textContent);api('/api/alerts',{ledMode:led,buzzerMode:buzz,ledBrightness:+$('#ledBrightness').value,ledColor:$('#ledColor').value});}
+$('#ledMode').addEventListener('change',sendAlertModes);$('#buzzerMode').addEventListener('change',sendAlertModes);$('#ledBrightness').addEventListener('change',sendAlertModes);$('#ledColor').addEventListener('change',sendAlertModes);
+$('#hornBtn').addEventListener('pointerdown',e=>{e.preventDefault();$('#buzzerMode').value='horn';sendAlertModes();$('#hornBtn').classList.add('active')});
+function hornRelease(){if($('#buzzerMode').value==='horn'){$('#buzzerMode').value='off';sendAlertModes()}$('#hornBtn').classList.remove('active')}
+['pointerup','pointercancel','pointerleave','lostpointercapture'].forEach(ev=>$('#hornBtn').addEventListener(ev,hornRelease));
+$('#hazardBtn').addEventListener('click',()=>{const active=$('#ledMode').value==='all_blink'&&$('#buzzerMode').value==='repeat';$('#ledMode').value=active?'off':'all_blink';$('#buzzerMode').value=active?'off':'repeat';sendAlertModes();});
+$('#alertsOffBtn').addEventListener('click',()=>{$('#ledMode').value='off';$('#buzzerMode').value='off';sendAlertModes();toast('Lights and buzzer off')});
+function fmtSpeed(v){return (typeof v==='number'&&v>=0)?v.toFixed(2):'—'}function fmtClock(sec){if(!Number.isFinite(sec)||sec<0)return '—';const h=Math.floor(sec/3600),m=Math.floor((sec%3600)/60),s=Math.floor(sec%60);return h+'h '+m+'m '+s+'s'}
+async function poll(){const s=await api('/api/status');if(s){setLink(true);$('#distance').innerHTML=(s.distance>=0?s.distance.toFixed(0):'—')+' <small>cm</small>';$('#rssi').innerHTML=s.rssi+' <small>dBm</small>';$('#lastReason').textContent=s.reason||'Ready';$('#battery').innerHTML=(s.battery>=0?s.battery.toFixed(1):'—')+' <small>V</small>';$('#measuredSpeed').innerHTML=(s.speedMps>=0?s.speedMps.toFixed(2):'—')+' <small>m/s</small>';$('#tripDistance').innerHTML=(s.tripM>=0?s.tripM.toFixed(2):'—')+' <small>m</small>';$('#batteryPercent').innerHTML=(s.batteryPct>=0?Math.round(s.batteryPct):'—')+' <small>%</small>';$('#batteryState').textContent=s.batteryState||'UNKNOWN';$('#leftWheelSpeed').textContent=s.leftSpeedMmS>=0?fmtSpeed(s.leftSpeedMmS/1000)+' m/s':(s.encoderEnabled?'WAITING':'—');$('#rightWheelSpeed').textContent=s.rightSpeedMmS>=0?fmtSpeed(s.rightSpeedMmS/1000)+' m/s':(s.encoderEnabled?'WAITING':'—');$('#encoderState').textContent=s.encoderEnabled?(s.encoderSignal?'ACTIVE':'NO PULSES'):'OFF';$('#encoderDetail').textContent=s.encoderEnabled?'PPR '+s.ticksPerRev+' · wheel '+s.wheelDiameterMm+' mm': 'Enable after both encoders are wired';$('#rangeState').textContent=s.distance>=0?s.distance.toFixed(0)+' cm':'NO ECHO';$('#linkState').textContent=s.rssi+' dBm';$('#uptime').textContent=fmtClock(s.uptime);$('#telemetryHealth').textContent=s.batteryState==='LOW'||s.batteryState==='CRITICAL'?'CHECK BATTERY':(s.encoderEnabled&&!s.encoderSignal?'CHECK ENCODERS':'SYSTEM OK');$('#patrolToggle').checked=!!s.patrol;$('#ledState').textContent=s.ledReady?'READY':'NOT READY';$('#buzzerState').textContent='GPIO19';if(s.obstacleBlocked&&$('#obstacleToggle').checked)$('#lastReason').textContent='Obstacle safety stop';}else setLink(false)}
+async function initialise(){const s=await api('/api/status');if(s){setLink(true);$('#speedLimit').value=s.maxSpeed??70;$('#sensitivity').value=s.sensitivity??70;$('#deadzone').value=s.deadZone??12;$('#obstacleRange').value=s.obstacleLimit??25;$('#obstacleToggle').checked=!!s.obstacleEnabled;$('#patrolToggle').checked=!!s.patrol;$('#cruiseToggle').checked=!!s.cruiseEnabled;$('#cruiseSpeed').value=s.cruiseSpeed??40;$('#encoderToggle').checked=!!s.encoderEnabled;$('#ticksPerRev').value=s.ticksPerRev??20;$('#wheelDiameter').value=s.wheelDiameterMm??65;$('#maxWheelSpeed').value=s.maxWheelSpeedMmS??450;$('#batteryLow').value=s.batteryLowV??10.8;$('#ledBrightness').value=s.ledBrightness??64;$('#ledColor').value=s.ledColor??'cyan';$('#servoAngle').value=s.servo??90;$('#servoOut').textContent=(s.servo??90)+'°';$('#servoChip').textContent=(s.servo??90)+'°';}updateSettings();sendAlertModes();poll();setInterval(poll,700);}
+initialise();setInterval(keepAliveDrive,250);window.addEventListener('blur',()=>{if(activeDrive)stop()});document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});window.addEventListener('beforeunload',stop);
+</script></body></html>
